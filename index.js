@@ -1,3 +1,5 @@
+//起動時の第一引数にid_str、第二引数にmax_id(省略可)を入れると動くよ
+
 const fs = require("fs")
 const twitterModule = require("twitter");
 require('dotenv').config();
@@ -18,7 +20,8 @@ twitter.get("account/verify_credentials", function (error, data) {
   request()
 })
 let json = []
-let max_id = 2000000000000000000
+let max_id = process.argv[3] ? process.argv[3] : 2000000000000000000
+console.log(max_id)
 const request = ()=>{
   twitter.get("statuses/user_timeline",
   {
@@ -42,7 +45,7 @@ const request = ()=>{
     }
     if(max_id === data[data.length-1].id_str) process.exit(0)
     max_id = data[data.length-1].id_str
-    fs.writeFileSync("./data.json",JSON.stringify(json),"utf8")
+    fs.writeFileSync("./data/data.json",JSON.stringify(json),"utf8")
     request()
 
   })
