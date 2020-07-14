@@ -1,4 +1,6 @@
 //起動時の第一引数にid_str、第二引数にmax_id(省略可)を入れると動くよ
+//max_id:これを含まず、これより過去のツイートを取得できる。
+//二度目以降は一番古いtweetのid_strをmax_idにしとくとそれより古いのが取れる。
 
 const fs = require("fs")
 const twitterModule = require("twitter");
@@ -9,6 +11,7 @@ const twitter = new twitterModule({
   access_token_key: process.env.access_token_key,
   access_token_secret: process.env.access_token_secret
 });
+const startTime = (new Date).getTime()
 
 twitter.get("account/verify_credentials", function (error, data) {
   mydata = JSON.stringify(data);
@@ -45,7 +48,7 @@ const request = ()=>{
     }
     if(max_id === data[data.length-1].id_str) process.exit(0)
     max_id = data[data.length-1].id_str
-    fs.writeFileSync("./data/data.json",JSON.stringify(json),"utf8")
+    fs.writeFileSync(`./data/${process.argv[2]}-${startTime}.json`,JSON.stringify(json),"utf8")
     request()
 
   })
